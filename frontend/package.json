@@ -1,22 +1,25 @@
 {
-  "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "firebase": "^11.4.0",
-    "pinia": "^3.0.1",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0",
-    "vue-tg": "^0.8.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.2.0"
-  }
+	"name": "frontend",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"start": "vite",
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"ngrok": "ngrok http --domain=faithful-kid-apt.ngrok-free.app 2525"
+	},
+	"dependencies": {
+		"firebase": "^11.4.0",
+		"pinia": "^3.0.1",
+		"vue": "^3.5.13",
+		"vue-router": "^4.5.0",
+		"vue-tg": "^0.9.0-beta.3"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^5.2.1",
+		"sass": "^1.85.1",
+		"vite": "^6.2.0"
+	}
 }

@@ -25,60 +25,71 @@ export function start(bot) {
             reply_markup: {
                 inline_keyboard: [
                     [{ text: '👤 Пассажир', callback_data: 'role_passenger' }],
-                    [{ text: '🚗 Водитель', callback_data: 'role_driver' }]
+                    [{ text: '🚗 Водитель', callback_data: 'role_driver' }],
                 ]
             }
         });
+
+        // await ctx.reply("Привет!", {
+        //     reply_markup: {
+        //       inline_keyboard: [[
+        //         {
+        //           text: "Открыть приложение",
+        //           web_app: { url: "https://faithful-kid-apt.ngrok-free.app" },
+        //         }
+        //       ]]
+        //     }
+        // });
     });
 
-    bot.callbackQuery('role_passenger', async (ctx) => {
-		await ctx.answerCallbackQuery();
+    // bot.callbackQuery('role_passenger', async (ctx) => {
+	// 	await ctx.answerCallbackQuery();
 
-        await ctx.reply("Выберите действие:", {
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "🆕 Создать заявку", callback_data: "create_transfer_request" }],
-                    [{ text: "📋 Показать мои заявки", callback_data: "show_my_requests" }],
-                    [{ text: "🗑️ Удалить заявку", callback_data: "delete_request" }],
-                ]
-            }
-        });
-    });
+    //     await ctx.reply("Выберите действие:", {
+    //         reply_markup: {
+    //             inline_keyboard: [
+    //                 [{ text: "🆕 Создать заявку", callback_data: "create_transfer_request" }],
+    //                 [{ text: "📋 Показать мои заявки", callback_data: "show_my_requests" }],
+    //                 [{ text: "🗑️ Удалить заявку", callback_data: "delete_request" }],
+    //             ]
+    //         }
+    //     });
+    // });
 
 
 
-    bot.callbackQuery('delete_request', async (ctx) => {
-		await ctx.answerCallbackQuery();
+    // bot.callbackQuery('delete_request', async (ctx) => {
+	// 	await ctx.answerCallbackQuery();
 
-        const userId = ctx.from.id;
-        const querySnapshot = await getDocs(collection(db, 'transfer-requests'));
-        const userRequests = [];
+    //     const userId = ctx.from.id;
+    //     const querySnapshot = await getDocs(collection(db, 'transfer-requests'));
+    //     const userRequests = [];
 
-        querySnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.userId === userId) {
-                userRequests.push({ id: doc.id, ...data });
-            }
-        });
+    //     querySnapshot.forEach(doc => {
+    //         const data = doc.data();
+    //         if (data.userId === userId) {
+    //             userRequests.push({ id: doc.id, ...data });
+    //         }
+    //     });
 
-        if (userRequests.length === 0) {
-            return ctx.reply("У вас нет активных заявок для удаления.");
-        }
+    //     if (userRequests.length === 0) {
+    //         return ctx.reply("У вас нет активных заявок для удаления.");
+    //     }
 
-        await ctx.reply("Выберите заявку для удаления:", {
-            reply_markup: {
-                inline_keyboard: userRequests.map(req => [
-                    { text: `${req.from} → ${req.to}, ${req.datetime}`, callback_data: `delete_${req.id}` }
-                ])
-            }
-        });
-    });
+    //     await ctx.reply("Выберите заявку для удаления:", {
+    //         reply_markup: {
+    //             inline_keyboard: userRequests.map(req => [
+    //                 { text: `${req.from} → ${req.to}, ${req.datetime}`, callback_data: `delete_${req.id}` }
+    //             ])
+    //         }
+    //     });
+    // });
 
-    bot.callbackQuery(/delete_(.+)/, async (ctx) => {
-		await ctx.answerCallbackQuery();
-		
-        const requestId = ctx.match[1];
-        await deleteDoc(doc(db, 'transfer-requests', requestId));
-        await ctx.reply("✅ Заявка удалена!");
-    });
+    // bot.callbackQuery(/delete_(.+)/, async (ctx) => {
+	// 	await ctx.answerCallbackQuery();
+
+    //     const requestId = ctx.match[1];
+    //     await deleteDoc(doc(db, 'transfer-requests', requestId));
+    //     await ctx.reply("✅ Заявка удалена!");
+    // });
 }

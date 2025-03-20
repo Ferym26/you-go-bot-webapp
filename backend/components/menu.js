@@ -4,12 +4,16 @@ const menuList = [
 		description: 'Запуск бота',
 	},
 	{
-		command: 'create_transfer_request',
-		description: 'Создать объявление',
+		command: 'change_role',
+		description: 'Сменить роль',
 	},
 	{
-		command: 'show_my_requests',
-		description: 'Показать мои объявления',
+		command: 'show_all_requests',
+		description: 'Посмотреть все заявки',
+	},
+	{
+		command: 'show_all_trips',
+		description: 'Посмотреть все поездки',
 	},
 ]
 
