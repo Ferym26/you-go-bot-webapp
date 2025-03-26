@@ -9,7 +9,8 @@ export default defineConfig({
     port: 2525,
     allowedHosts: true,
     headers: {
-      "ngrok-skip-browser-warning": "true"
+      "ngrok-skip-browser-warning": "true",
+	  "Cross-Origin-Opener-Policy": "same-origin",
     },
   }
 })

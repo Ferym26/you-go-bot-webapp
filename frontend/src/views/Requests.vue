@@ -1,6 +1,6 @@
 <template>
-	<div class="requests">
-		<h1>Заявки на трансфер</h1>
+	<div class="requests container page-indent">
+		<h1 class="page-title">Список заявок</h1>
 		<div v-if="loading" class="loading">
 			Загрузка...
 		</div>
@@ -23,8 +23,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase/config';
-import RequestCard from '../components/RequestCard.vue';
+import { db } from '../services/firebase';
+import RequestCard from '../components/RequestCard/RequestCard.vue';
 
 const requests = ref([]);
 const loading = ref(true);
@@ -54,32 +54,12 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.requests {
-	padding: var(--spacing-medium);
-	max-width: 800px;
-	margin: 0 auto;
-
-	h1 {
-		margin-bottom: var(--spacing-large);
-		color: var(--color-text);
-		text-align: center;
+	.requests {
+		//
 	}
-}
 
-.requests-list {
-	display: grid;
-	gap: var(--spacing-medium);
-}
-
-.loading,
-.error,
-.empty {
-	text-align: center;
-	padding: var(--spacing-large);
-	color: var(--color-text);
-}
-
-.error {
-	color: var(--color-error);
-}
+	.requests-list {
+		display: grid;
+		gap: 12px;
+	}
 </style>

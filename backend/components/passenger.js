@@ -1,6 +1,6 @@
 import { db } from '../utils/firebase.js';
 import { getDocs, collection } from 'firebase/firestore';
-
+import { parseTimestamp } from '../utils/timestampFormatter.js';
 
 export function registerPassenger(bot) {
 	bot.callbackQuery('role_passenger', async (ctx) => {
@@ -40,9 +40,8 @@ export function registerPassenger(bot) {
 
 		let message = "📋 Ваши заявки:\n";
 		userRequests.forEach((req, index) => {
-			message += `📌 ${index + 1}. ${req.from} → ${req.to}, ${req.datetime}\n`;
+			message += `📌 ${index + 1}. ${req.from} → ${req.to}, ${parseTimestamp(req.datetime.seconds)}\n`;
 		});
-
 		await ctx.reply(message);
 	});
 }

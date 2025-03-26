@@ -6,7 +6,7 @@
 		<header class="request__header">
 			<div class="request__route route">
 				<span class="route__point">{{ request.from }}</span>
-				<span class="route__arrow">→</span>
+				<span class="route__arrow"> → </span>
 				<span class="route__point">{{ request.to }}</span>
 			</div>
 			<div class="request__status status" :class="statusClass">
@@ -29,7 +29,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useTelegram } from '../composables/useTelegram';
+import { useTelegram } from '../../composables/useTelegram';
 
 const props = defineProps({
 	request: {
@@ -83,7 +83,11 @@ const openChat = (user) => {
 	}
 
 	try {
-		tg.openTelegramLink(`https://t.me/${user}`)
+		// tg.openTelegramLink(`https://t.me/${user}`)
+
+		const message = `Здравствуйте! Я по поводу поездки ${props.request.from} → ${props.request.to} ${formatDate(props.request.datetime)}.`;
+		const encodedMessage = encodeURIComponent(message);
+		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);
 	} catch (error) {
 		console.error('Error opening chat:', error);
 		tg.showPopup({
@@ -95,106 +99,4 @@ const openChat = (user) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.request {
-	background-color: var(--color-card-bg, #ffffff);
-	border-radius: 12px;
-	padding: var(--spacing-medium);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
-	cursor: pointer;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-	}
-
-	&__header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: var(--spacing-medium);
-	}
-
-	&__route {
-		flex: 1;
-		margin-right: var(--spacing-medium);
-	}
-
-	&__details {
-		margin-top: var(--spacing-medium);
-	}
-}
-
-.route {
-	display: flex;
-	align-items: center;
-	font-size: 1.1em;
-	font-weight: var(--font-weight-medium);
-
-	&__point {
-		&:first-child {
-			color: var(--color-primary);
-		}
-	}
-
-	&__arrow {
-		margin: 0 var(--spacing-small);
-		color: var(--color-text-secondary);
-		font-weight: normal;
-	}
-}
-
-.status {
-	padding: 6px 12px;
-	border-radius: 20px;
-	font-size: 0.9em;
-	font-weight: 500;
-	white-space: nowrap;
-
-	&--pending {
-		background-color: var(--color-warning);
-		color: #000;
-	}
-
-	&--accepted {
-		background-color: var(--color-primary);
-		color: #fff;
-	}
-
-	&--completed {
-		background-color: var(--color-success);
-		color: #fff;
-	}
-
-	&--cancelled {
-		background-color: var(--color-error);
-		color: #fff;
-	}
-}
-
-.details {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--spacing-medium);
-
-	&__item {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-small);
-		color: var(--color-text-secondary);
-		font-size: 0.9em;
-	}
-
-	&__icon {
-		color: var(--color-primary);
-		width: 16px;
-		text-align: center;
-		opacity: 0.8;
-	}
-
-	&__text {
-		white-space: nowrap;
-	}
-}
-</style>
+<style src="./style.sass" lang="sass" scoped></style>
