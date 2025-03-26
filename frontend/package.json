@@ -11,6 +11,7 @@
 		"ngrok": "ngrok http --domain=faithful-kid-apt.ngrok-free.app 2525 --request-header-remove 'ngrok-skip-browser-warning'"
 	},
 	"dependencies": {
+		"element-plus": "^2.9.7",
 		"firebase": "^11.4.0",
 		"pinia": "^3.0.1",
 		"vue": "^3.5.13",
@@ -20,6 +21,8 @@
 	"devDependencies": {
 		"@vitejs/plugin-vue": "^5.2.1",
 		"sass": "^1.85.1",
+		"unplugin-auto-import": "^19.1.2",
+		"unplugin-vue-components": "^28.4.1",
 		"vite": "^6.2.0"
 	}
 }
