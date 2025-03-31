@@ -1,7 +1,31 @@
+// Переопределение CSS переменных Element Plus
+:root {
+
+}
+
+.el-input,
+.el-select,
 .el-date-editor {
+	width: 100% !important;
+	--el-date-editor-width: 100% !important;
 	--el-date-editor-daterange-width: 100% !important;
 }
 
 .el-row {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
+
+// .el-select-dropdown {
+// 	&__item {
+// 		height: auto !important;
+// 		min-height: 34px !important;
+// 		padding: 0 12px !important;
+// 		white-space: normal !important;
+// 		overflow: unset !important;
+// 		text-overflow: unset !important;
+// 	}
+// }

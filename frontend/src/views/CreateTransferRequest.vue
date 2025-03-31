@@ -47,10 +47,11 @@
 					placeholder="Количество пассажиров"
 				/>
 			</el-row>
-			<el-row :gutter="12">
+			<el-row :gutter="12" class="create-request__action">
 				<el-button
 					type="primary"
 					size="large"
+					native-type="submit"
 				>
 					Создать заявку
 				</el-button>
@@ -60,33 +61,72 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useRouter } from 'vue-router';
+import { useTelegram } from '../composables/useTelegram';
+
 import { places } from '../data/places';
 
 const router = useRouter();
+const { tg, user } = useTelegram();
 
 const form = ref({
 	locationFrom: '',
 	locationTo: '',
 	datetime: '',
 	passengers: 1,
-	user: null,
+	userId: null,
+	userName: null,
+});
+
+onMounted(() => {
+	if (user) {
+		form.value.userId = user.id;
+		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
+	} else {
+		tg?.showPopup({
+			title: 'Ошибка',
+			message: 'Не удалось получить данные пользователя',
+			buttons: [{type: 'ok'}],
+		});
+	}
 });
 
 const handleSubmit = async () => {
+	if (!form.value.userId) {
+		tg?.showPopup({
+			title: 'Ошибка',
+			message: 'Не удалось получить ID пользователя',
+			buttons: [{type: 'ok'}]
+		});
+		return;
+	}
+
 	try {
 		await addDoc(collection(db, 'transfer-requests'), {
 			...form.value,
 			createdAt: new Date(),
-			status: 'pending'
+			status: 'pending',
 		});
 
-		// router.push('/requests');
+		tg?.showPopup({
+			title: 'Успех',
+			message: 'Заявка успешно создана',
+			buttons: [{
+				type: 'ok',
+				text: 'OK',
+				onClick: () => router.push('/requests')
+			}]
+		});
 	} catch (error) {
 		console.error('Error creating request:', error);
+		tg?.showPopup({
+			title: 'Ошибка',
+			message: 'Не удалось создать заявку',
+			buttons: [{type: 'ok'}]
+		});
 	}
 };
 </script>
@@ -95,5 +135,15 @@ const handleSubmit = async () => {
 	.create-request {
 		max-width: 460px;
 		margin: 0 auto;
+
+		&__action {
+			.el-button {
+				width: 100%;
+			}
+		}
+
+		.el-input-number {
+			width: 100%;
+		}
 	}
 </style>

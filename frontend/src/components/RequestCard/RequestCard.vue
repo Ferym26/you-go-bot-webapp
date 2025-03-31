@@ -5,9 +5,9 @@
 	>
 		<header class="request__header">
 			<div class="request__route route">
-				<span class="route__point">{{ request.from }}</span>
+				<span class="route__point">{{ request.locationFrom }}</span>
 				<span class="route__arrow"> → </span>
-				<span class="route__point">{{ request.to }}</span>
+				<span class="route__point">{{ request.locationTo }}</span>
 			</div>
 		</header>
 

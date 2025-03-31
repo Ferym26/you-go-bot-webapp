@@ -4,11 +4,10 @@ import router from './router'
 
 // Element Plus
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import './assets/styles/_element-plus.scss'
 import ru from 'element-plus/dist/locale/ru.mjs'
 
 // Styles
+import 'element-plus/dist/index.css'
 import './assets/styles/index.scss'
 
 const app = createApp(App)

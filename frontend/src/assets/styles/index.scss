@@ -1,9 +1,11 @@
-// Base styles
+// Базовые стили
 @use 'reset';
 @use 'fonts';
 @use 'base';
+
+// Переопределение Element Plus
 @use 'element-plus';
 
-// Components
+// Компоненты
 @use 'titles';
 

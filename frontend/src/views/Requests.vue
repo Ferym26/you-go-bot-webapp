@@ -2,19 +2,23 @@
 	<div class="requests container page-indent">
 		<h1 class="page-title">Список заявок</h1>
 		<el-row :gutter="12">
-			<el-col :span="12">
+			<el-col :span="24">
 				<el-select-v2
 					v-model="placeFrom"
 					filterable
-					:options="placeFromOptions"
+					:options="places"
+					size="large"
 					placeholder="Откуда"
 				/>
 			</el-col>
-			<el-col :span="12">
+		</el-row>
+		<el-row :gutter="12">
+			<el-col :span="24">
 				<el-select-v2
 					v-model="placeTo"
 					filterable
-					:options="placeToOptions"
+					:options="places"
+					size="large"
 					placeholder="Куда"
 				/>
 			</el-col>
@@ -22,11 +26,10 @@
 		<el-row :gutter="12">
 			<el-col :span="24">
 				<el-date-picker
-					v-model="dateRange"
-					type="daterange"
-					range-separator="To"
-					start-placeholder="Start date"
-					end-placeholder="End date"
+					v-model="date"
+					type="date"
+					placeholder="Выберите дату"
+					size="large"
 				/>
 			</el-col>
 		</el-row>
@@ -52,43 +55,68 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { collection, getDocs } from 'firebase/firestore';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
+
 import RequestCard from '../components/RequestCard/RequestCard.vue';
+
+import { places } from '../data/places';
 
 const requests = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
-const fetchRequests = async () => {
+// Храним функцию отписки
+let unsubscribe = null;
+
+const subscribeToRequests = () => {
 	try {
 		loading.value = true;
 		error.value = null;
 
-		const querySnapshot = await getDocs(collection(db, 'transfer-requests'));
-		requests.value = querySnapshot.docs.map(doc => ({
-			id: doc.id,
-			...doc.data()
-		}));
+		// Создаем запрос с сортировкой по дате создания
+		const q = query(
+			collection(db, 'transfer-requests'),
+			orderBy('createdAt', 'desc')
+		);
+
+		// Подписываемся на изменения
+		unsubscribe = onSnapshot(q,
+			(snapshot) => {
+				requests.value = snapshot.docs.map(doc => ({
+					id: doc.id,
+					...doc.data()
+				}));
+				loading.value = false;
+			},
+			(err) => {
+				console.error('Error fetching requests:', err);
+				error.value = 'Ошибка при загрузке заявок';
+				loading.value = false;
+			}
+		);
 	} catch (err) {
-		console.error('Error fetching requests:', err);
-		error.value = 'Ошибка при загрузке заявок';
-	} finally {
+		console.error('Error setting up listener:', err);
+		error.value = 'Ошибка при настройке слушателя';
 		loading.value = false;
 	}
 };
 
 onMounted(() => {
-	fetchRequests();
+	subscribeToRequests();
 });
 
-const placeFrom = ref([])
-const placeTo = ref([])
-const placeFromOptions = ref([])
-const placeToOptions = ref([])
+// Отписываемся при размонтировании компонента
+onUnmounted(() => {
+	if (unsubscribe) {
+		unsubscribe();
+	}
+});
 
-const dateRange = ref('')
+const placeFrom = ref([]);
+const placeTo = ref([]);
+const date = ref('');
 </script>
 
 <style lang="scss" scoped>
