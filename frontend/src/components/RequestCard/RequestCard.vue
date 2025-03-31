@@ -9,9 +9,6 @@
 				<span class="route__arrow"> → </span>
 				<span class="route__point">{{ request.to }}</span>
 			</div>
-			<div class="request__status status" :class="statusClass">
-				{{ statusText }}
-			</div>
 		</header>
 
 		<div class="request__details details">
@@ -23,6 +20,13 @@
 				<i class="details__icon fas fa-users"></i>
 				<span class="details__text">{{ request.passengers }} пассажир(ов)</span>
 			</div>
+		</div>
+		<div class="request__avatar">
+			<img
+				:src="request.avatar"
+				:alt="request.name"
+				class="request__avatar-img"
+			>
 		</div>
 	</article>
 </template>
@@ -36,16 +40,6 @@ const props = defineProps({
 		type: Object,
 		required: true
 	}
-});
-
-const statusText = computed(() => {
-	const statuses = {
-		pending: 'Ожидает',
-		accepted: 'Принята',
-		completed: 'Завершена',
-		cancelled: 'Отменена'
-	};
-	return statuses[props.request.status] || props.request.status;
 });
 
 const statusClass = computed(() => ({
@@ -83,8 +77,6 @@ const openChat = (user) => {
 	}
 
 	try {
-		// tg.openTelegramLink(`https://t.me/${user}`)
-
 		const message = `Здравствуйте! Я по поводу поездки ${props.request.from} → ${props.request.to} ${formatDate(props.request.datetime)}.`;
 		const encodedMessage = encodeURIComponent(message);
 		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);

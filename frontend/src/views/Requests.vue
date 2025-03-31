@@ -1,6 +1,37 @@
 <template>
 	<div class="requests container page-indent">
 		<h1 class="page-title">Список заявок</h1>
+		<el-row :gutter="12">
+			<el-col :span="12">
+				<el-select-v2
+					v-model="placeFrom"
+					filterable
+					:options="placeFromOptions"
+					placeholder="Откуда"
+				/>
+			</el-col>
+			<el-col :span="12">
+				<el-select-v2
+					v-model="placeTo"
+					filterable
+					:options="placeToOptions"
+					placeholder="Куда"
+				/>
+			</el-col>
+		</el-row>
+		<el-row :gutter="12">
+			<el-col :span="24">
+				<el-date-picker
+					v-model="dateRange"
+					type="daterange"
+					range-separator="To"
+					start-placeholder="Start date"
+					end-placeholder="End date"
+				/>
+			</el-col>
+		</el-row>
+
+
 		<div v-if="loading" class="loading">
 			Загрузка...
 		</div>
@@ -51,13 +82,16 @@ const fetchRequests = async () => {
 onMounted(() => {
 	fetchRequests();
 });
+
+const placeFrom = ref([])
+const placeTo = ref([])
+const placeFromOptions = ref([])
+const placeToOptions = ref([])
+
+const dateRange = ref('')
 </script>
 
 <style lang="scss" scoped>
-	.requests {
-		//
-	}
-
 	.requests-list {
 		display: grid;
 		gap: 12px;

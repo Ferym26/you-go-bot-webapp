@@ -1,68 +1,79 @@
 <template>
-	<div class="create-request">
-		<h1>Создать заявку на трансфер</h1>
-		<!-- <form @submit.prevent="handleSubmit" class="request-form">
-			<div class="form-group">
-				<label for="from">Откуда</label>
-				<input
-					type="text"
-					id="from"
-					v-model="form.from"
+	<div class="create-request container page-indent">
+		<h1 class="page-title">Создать заявку на трансфер</h1>
+		<form @submit.prevent="handleSubmit" class="request-form">
+			<el-row :gutter="12">
+				<el-select
+					v-model="form.locationFrom"
+					filterable
 					required
-					placeholder="Введите пункт отправления"
+					placeholder="Выберите пункт отправления"
 				>
-			</div>
-
-			<div class="form-group">
-				<label for="to">Куда</label>
-				<input
-					type="text"
-					id="to"
-					v-model="form.to"
+					<el-option
+						v-for="item in places"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</el-select>
+			</el-row>
+			<el-row :gutter="12">
+				<el-select
+					v-model="form.locationTo"
+					filterable
 					required
-					placeholder="Введите пункт назначения"
+					placeholder="Выберите пункт назначения"
 				>
-			</div>
-
-			<div class="form-group">
-				<label for="datetime">Дата и время</label>
-				<input
-					type="datetime-local"
-					id="datetime"
+					<el-option
+						v-for="item in places"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value"
+					/>
+				</el-select>
+			</el-row>
+			<el-row :gutter="12">
+				<el-date-picker
 					v-model="form.datetime"
-					required
-				>
-			</div>
-
-			<div class="form-group">
-				<label for="passengers">Количество пассажиров</label>
-				<input
-					type="number"
-					id="passengers"
+					type="datetime"
+					placeholder="Выберите дату и время"
+				/>
+			</el-row>
+			<el-row :gutter="12">
+				<el-input-number
 					v-model="form.passengers"
-					required
-					min="1"
+					:min="1"
+					:max="10"
+					placeholder="Количество пассажиров"
+				/>
+			</el-row>
+			<el-row :gutter="12">
+				<el-button
+					type="primary"
+					size="large"
 				>
-			</div>
-
-			<button type="submit" class="submit-btn">Создать заявку</button>
-		</form> -->
+					Создать заявку
+				</el-button>
+			</el-row>
+		</form>
 	</div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-// import { collection, addDoc } from 'firebase/firestore';
-// import { db } from '../firebase/config';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../services/firebase';
 import { useRouter } from 'vue-router';
+import { places } from '../data/places';
 
 const router = useRouter();
 
 const form = ref({
-	from: '',
-	to: '',
+	locationFrom: '',
+	locationTo: '',
 	datetime: '',
-	passengers: 1
+	passengers: 1,
+	user: null,
 });
 
 const handleSubmit = async () => {
@@ -73,7 +84,7 @@ const handleSubmit = async () => {
 			status: 'pending'
 		});
 
-		router.push('/requests');
+		// router.push('/requests');
 	} catch (error) {
 		console.error('Error creating request:', error);
 	}
@@ -81,56 +92,8 @@ const handleSubmit = async () => {
 </script>
 
 <style lang="scss" scoped>
-.create-request {
-	padding: var(--spacing-medium);
-	max-width: 600px;
-	margin: 0 auto;
-
-	h1 {
-		margin-bottom: var(--spacing-large);
-		color: var(--color-text);
+	.create-request {
+		max-width: 460px;
+		margin: 0 auto;
 	}
-}
-
-.request-form {
-	display: grid;
-	gap: var(--spacing-medium);
-}
-
-.form-group {
-	display: grid;
-	gap: var(--spacing-small);
-
-	label {
-		color: var(--color-text);
-		font-weight: var(--font-weight-medium);
-	}
-
-	input {
-		padding: 8px 12px;
-		border: 1px solid var(--color-border, #ddd);
-		border-radius: 4px;
-		font-size: var(--font-size-base);
-
-		&:focus {
-			outline: none;
-			border-color: var(--color-primary);
-		}
-	}
-}
-
-.submit-btn {
-	margin-top: var(--spacing-medium);
-	background-color: var(--color-primary);
-	color: white;
-	border: none;
-	padding: 12px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-weight: var(--font-weight-medium);
-
-	&:hover {
-		opacity: 0.9;
-	}
-}
 </style>
