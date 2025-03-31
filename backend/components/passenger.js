@@ -40,7 +40,7 @@ export function registerPassenger(bot) {
 
 		let message = "📋 Ваши заявки:\n";
 		userRequests.forEach((req, index) => {
-			message += `📌 ${index + 1}. ${req.from} → ${req.to}, ${parseTimestamp(req.datetime.seconds)}\n`;
+			message += `📌 ${index + 1}. ${req.locationFrom} → ${req.locationTo}, ${parseTimestamp(req.datetime.seconds)}\n`;
 		});
 		await ctx.reply(message);
 	});
