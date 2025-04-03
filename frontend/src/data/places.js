@@ -1,7 +1,7 @@
 export const places = [
 	{
 		label: "Тбилиси",
-		value: "tbilisi"
+		value: "tbilisi",
 	},
 	{
 		label: "Батуми",
@@ -12,8 +12,8 @@ export const places = [
 		value: "kutaisi",
 	},
 	{
-	label: "Рустави",
-	value: "rustavi"
+		label: "Рустави",
+		value: "rustavi",
 	},
 	{
 		label: "Зугдиди",

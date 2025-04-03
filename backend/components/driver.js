@@ -35,7 +35,7 @@ export function registerDriver(bot) {
 		await ctx.reply("Выберите действие:", {
 			reply_markup: {
 				inline_keyboard: [
-					[{ text: "Создать предложение о поездке", callback_data: "driver_create_trip" }],
+					[{ text: "Создать поездкy", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
 					[{ text: "Редактировать анкету", callback_data: "driver_edit_profile" }],
 					[{ text: "📄 Посмотреть анкету", callback_data: "driver_view_profile" }],
 					[{ text: "Мои поездки", callback_data: "driver_view_trips" }],
@@ -140,12 +140,13 @@ export function registerDriver(bot) {
 
 				case 'driver_create_description':
 					session.data.description = ctx.message.text;
+					// session.data.userId = userId;
 					await setDoc(doc(db, 'drivers', String(userId)), session.data);
 					sessions.delete(userId);
 					await ctx.reply("✅ Ваша анкета создана! Теперь вы можете создавать поездки.", {
 						reply_markup: {
 							inline_keyboard: [
-								[{ text: "Создать поездку", callback_data: "driver_create_trip" }]
+								[{ text: "Создать поездку", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
 							]
 						}
 					});

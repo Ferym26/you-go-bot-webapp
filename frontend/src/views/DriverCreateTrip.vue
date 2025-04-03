@@ -1,6 +1,6 @@
 <template>
-	<div class="create-request container page-indent">
-		<h1 class="page-title">Создать заявку на трансфер</h1>
+	<div class="driver-create-trip container page-indent">
+		<h1 class="page-title">Создать поездкy</h1>
 		<form
 			@submit.prevent="handleSubmit"
 			class="request-form"
@@ -44,19 +44,25 @@
 			</el-row>
 			<el-row :gutter="12">
 				<el-input-number
-					v-model="form.passengers"
+					v-model="form.freePlaces"
 					:min="1"
-					:max="10"
-					placeholder="Количество пассажиров"
+					:max="8"
+					placeholder="Количество свободных мест"
 				/>
 			</el-row>
-			<el-row :gutter="12" class="create-request__action">
+			<el-row :gutter="12">
+				<el-input
+					v-model="form.price"
+					placeholder="Введите стоимость поездки"
+				/>
+			</el-row>
+			<el-row :gutter="12" class="driver-create-trip__action">
 				<el-button
 					type="primary"
 					size="large"
 					native-type="submit"
 				>
-					Создать заявку
+					Создать поездку
 				</el-button>
 			</el-row>
 		</form>
@@ -79,7 +85,8 @@ const form = ref({
 	locationFrom: '',
 	locationTo: '',
 	datetime: '',
-	passengers: 1,
+	freePlaces: 0,
+	price: 0,
 	userId: null,
 	userName: null,
 });
@@ -108,7 +115,7 @@ const handleSubmit = async () => {
 	}
 
 	try {
-		await addDoc(collection(db, 'transfer-requests'), {
+		await addDoc(collection(db, 'transfer-proposals'), {
 			...form.value,
 			createdAt: new Date(),
 			status: 'pending',
@@ -116,11 +123,11 @@ const handleSubmit = async () => {
 
 		tg?.showPopup({
 			title: 'Успех',
-			message: 'Заявка успешно создана',
+			message: 'Поездка успешно создана',
 			buttons: [{
 				type: 'ok',
 				text: 'OK',
-				onClick: () => router.push('/requests')
+				// onClick: () => router.push('/requests')
 			}]
 		});
 	} catch (error) {
@@ -135,7 +142,7 @@ const handleSubmit = async () => {
 </script>
 
 <style lang="scss" scoped>
-	.create-request {
+	.driver-create-trip {
 		&__action {
 			.el-button {
 				width: 100%;

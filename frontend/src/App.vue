@@ -11,6 +11,5 @@
 <style lang="scss">
 .app {
 	min-height: 100vh;
-	background-color: var(--color-background);
 }
 </style>

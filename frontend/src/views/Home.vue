@@ -6,44 +6,18 @@
 				Создать заявку
 			</router-link>
 			<router-link to="/requests" class="action-btn">
-				Все заявки
+				Список заявок
 			</router-link>
 			<router-link to="/trips" class="action-btn">
-				Все поездки
+				Список поездок
+			</router-link>
+			<router-link to="/driver-create-trip" class="action-btn">
+				Создать поездку
 			</router-link>
 		</div>
 	</div>
 </template>
 
 <style lang="scss" scoped>
-.home {
-	padding: var(--spacing-medium);
-	text-align: center;
 
-	h1 {
-		margin-bottom: var(--spacing-large);
-		color: var(--color-text);
-	}
-}
-
-.actions {
-	display: grid;
-	gap: var(--spacing-medium);
-	max-width: 400px;
-	margin: 0 auto;
-}
-
-.action-btn {
-	display: block;
-	padding: var(--spacing-medium);
-	background-color: var(--color-primary);
-	text-decoration: none;
-	border-radius: 8px;
-	font-weight: var(--font-weight-medium);
-	transition: opacity 0.2s;
-
-	&:hover {
-		opacity: 0.9;
-	}
-}
 </style>

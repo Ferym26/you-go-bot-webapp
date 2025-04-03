@@ -20,7 +20,12 @@ const routes = [
 		path: '/create-transfer-request',
 		name: 'CreateTransferRequest',
 		component: () => import('../views/CreateTransferRequest.vue')
-	}
+	},
+	{
+		path: '/driver-create-trip',
+		name: 'DriverCreateTrip',
+		component: () => import('../views/DriverCreateTrip.vue')
+	},
 ];
 
 const router = createRouter({

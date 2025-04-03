@@ -1,25 +1,42 @@
 <template>
 	<article
-		class="request"
-		@click="openChat(request.userName)"
+		class="trip"
 	>
-		<header class="request__header">
-			<div class="request__route route">
+		<header class="trip__header">
+			<div class="trip__route route">
 				<span class="route__point">{{ request.locationFrom }}</span>
 				<span class="route__arrow"> → </span>
 				<span class="route__point">{{ request.locationTo }}</span>
 			</div>
 		</header>
 
-		<div class="request__details details">
+		<div class="trip__details details">
 			<div class="details__item">
 				<i class="details__icon fas fa-calendar"></i>
 				<span class="details__text">{{ formatDate(request.datetime) }}</span>
 			</div>
 			<div class="details__item">
 				<i class="details__icon fas fa-users"></i>
-				<span class="details__text">{{ request.passengers }} пассажир(ов)</span>
+				<span class="details__text">{{ request.freePlaces }} свободных мест</span>
 			</div>
+		</div>
+		<div class="trip__price">
+			<span class="trip__price-text">Цена:</span>
+			<span class="trip__price-value">{{ request.price }}</span>
+		</div>
+		<div class="trip__action">
+			<el-button
+				type="primary"
+				@click="openChat(request.userName)"
+			>
+				Открыть чат
+			</el-button>
+			<el-button
+				type="info"
+				@click="openProfile"
+			>
+				Открыть анкету
+			</el-button>
 		</div>
 		<!-- <div class="request__avatar">
 			<img
@@ -32,7 +49,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { useTelegram } from '../../composables/useTelegram';
 
 const props = defineProps({
@@ -41,6 +57,8 @@ const props = defineProps({
 		required: true,
 	}
 });
+
+const emit = defineEmits(['openProfile']);
 
 const formatDate = (datetime) => {
 	if (!datetime) return '';
@@ -56,6 +74,10 @@ const formatDate = (datetime) => {
 };
 
 const { tg, ready } = useTelegram();
+
+const openProfile = () => {
+	emit('openProfile', props.request);
+};
 
 const openChat = (user) => {
 	console.log(1);
