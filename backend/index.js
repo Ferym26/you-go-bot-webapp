@@ -10,6 +10,7 @@ dotenv.config();
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
+// Регистрируем команды бота
 start(bot);
 registerDriver(bot);
 registerPassenger(bot);

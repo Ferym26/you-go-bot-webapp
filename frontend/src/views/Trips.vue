@@ -114,7 +114,11 @@ const dialogVisible = ref(false);
 const selectedDriver = ref(null);
 
 const handleOpenProfile = (tripData) => {
-	selectedDriver.value = tripData;
+	selectedDriver.value = {
+		userId: tripData.userId,
+		locationFrom: tripData.locationFrom,
+		locationTo: tripData.locationTo
+	};
 	dialogVisible.value = true;
 };
 
@@ -216,27 +220,27 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.trips {
-	&__filters {
-		margin-bottom: 20px;
+	.trips {
+		&__filters {
+			margin-bottom: 20px;
+		}
 	}
-}
 
-.trips-list {
-	display: grid;
-	gap: 12px;
-	margin-top: 20px;
-}
+	.trips-list {
+		display: grid;
+		gap: 12px;
+		margin-top: 20px;
+	}
 
-.loading,
-.error,
-.empty {
-	text-align: center;
-	padding: 20px;
-	color: var(--el-text-color-secondary);
-}
+	.loading,
+	.error,
+	.empty {
+		text-align: center;
+		padding: 20px;
+		color: var(--el-text-color-secondary);
+	}
 
-.error {
-	color: var(--el-color-danger);
-}
+	.error {
+		color: var(--el-color-danger);
+	}
 </style>
