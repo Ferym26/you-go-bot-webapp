@@ -84,10 +84,11 @@
 	</div>
 
 	<el-dialog
+		class="driver-profile-dialog"
 		v-model="dialogVisible"
 		title="Анкета водителя"
-		width="90%"
 		:close-on-click-modal="true"
+		:append-to-body="true"
 	>
 		<DriverProfile
 			v-if="selectedDriver"

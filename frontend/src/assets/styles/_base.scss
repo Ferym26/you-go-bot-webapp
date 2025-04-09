@@ -16,3 +16,9 @@ body {
 	padding-top: 10px;
 	padding-bottom: 20px;
 }
+
+.driver-profile-dialog {
+	--el-dialog-width: calc(100% - 32px) !important;
+
+	max-width: 460px;
+}

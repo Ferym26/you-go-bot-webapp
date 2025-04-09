@@ -82,12 +82,14 @@ const form = ref({
 	passengers: 1,
 	userId: null,
 	userName: null,
+	userAvatar: null,
 });
 
 onMounted(() => {
 	if (user) {
 		form.value.userId = user.id;
 		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
+		form.value.userAvatar = user.avatar;
 	} else {
 		tg?.showPopup({
 			title: 'Ошибка',

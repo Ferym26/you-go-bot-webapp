@@ -1,5 +1,8 @@
 <template>
-	<div v-if="loading" class="driver-profile__loading">
+	<div
+		v-if="loading"
+		class="driver-profile__loading"
+	>
 		<el-skeleton :rows="3" animated />
 	</div>
 	<div v-else-if="error" class="driver-profile__error">
@@ -8,22 +11,15 @@
 	<div v-else-if="!driverInfo" class="driver-profile__not-found">
 		Профиль водителя не найден
 	</div>
+
 	<div v-else class="driver-profile">
 		<div class="driver-profile__header">
-			<div class="driver-profile__avatar">
+			<div class="driver-profile__car">
 				<img
+					class="driver-profile__car-img"
 					:src="photoUrl"
-					:alt="driverInfo.userName"
 					@error="handleImageError"
-					class="driver-profile__avatar-img"
 				>
-			</div>
-			<div class="driver-profile__info">
-				<h3 class="driver-profile__name">{{ driverInfo.userName }}</h3>
-				<div class="driver-profile__rating">
-					<i class="fas fa-star"></i>
-					<span>{{ driverInfo.rating || 'Нет оценок' }}</span>
-				</div>
 			</div>
 		</div>
 
@@ -31,7 +27,7 @@
 			<div class="driver-profile__section">
 				<h4 class="driver-profile__section-title">О водителе</h4>
 				<p class="driver-profile__description">
-					{{ driverInfo.description || 'Описание не добавлено' }}
+					{{ driverInfo.name || 'Описание не добавлено' }}
 				</p>
 			</div>
 
@@ -74,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useTelegram } from '../../composables/useTelegram';
 import { db } from '../../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -101,17 +97,16 @@ const fetchDriverInfo = async () => {
 		loading.value = true;
 		error.value = null;
 
-		const driverRef = doc(db, 'drivers', String(props.driverData.userId))
-		const driverDoc = await getDoc(driverRef)
+		const driverRef = doc(db, 'drivers', String(props.driverData.userId));
+		const driverDoc = await getDoc(driverRef);
 
 		if (driverDoc.exists()) {
 			driverInfo.value = driverDoc.data();
 
 			if (driverInfo.value.carPhoto) {
-				// TODO: get photo from telegram
-				const response = await fetch(`http://localhost:8585/api/photo/${driverInfo.value.carPhoto}`)
-				const { url } = await response.json()
-				photoUrl.value = url
+				const response = await fetch(`http://localhost:8585/api/photo/${driverInfo.value.carPhoto}`);
+				const { url } = await response.json();
+				photoUrl.value = url;
 			}
 		} else {
 			error.value = 'Профиль водителя не найден';
@@ -123,6 +118,13 @@ const fetchDriverInfo = async () => {
 		loading.value = false;
 	}
 };
+
+// Следим за изменением userId и обновляем данные
+watch(() => props.driverData.userId, (newUserId) => {
+	if (newUserId) {
+		fetchDriverInfo();
+	}
+}, { immediate: true });
 
 onMounted(() => {
 	fetchDriverInfo();
@@ -164,99 +166,4 @@ const openChat = () => {
 };
 </script>
 
-<style lang="scss" scoped>
-.driver-profile {
-	padding: 20px;
-
-	&__loading,
-	&__error,
-	&__not-found {
-		padding: 20px;
-		text-align: center;
-		color: var(--el-text-color-secondary);
-	}
-
-	&__error {
-		color: var(--el-color-danger);
-	}
-
-	&__header {
-		display: flex;
-		align-items: center;
-		margin-bottom: 24px;
-	}
-
-	&__avatar {
-		width: 100px;
-		height: 100px;
-		margin-right: 20px;
-		border-radius: 50%;
-		overflow: hidden;
-
-		&-img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-		}
-	}
-
-	&__info {
-		flex: 1;
-	}
-
-	&__name {
-		font-size: 24px;
-		margin-bottom: 8px;
-	}
-
-	&__rating {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		color: var(--el-color-warning);
-	}
-
-	&__section {
-		margin-bottom: 24px;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	&__section-title {
-		font-size: 18px;
-		margin-bottom: 12px;
-		color: var(--el-text-color-primary);
-	}
-
-	&__description {
-		color: var(--el-text-color-regular);
-		line-height: 1.5;
-	}
-
-	&__car-info {
-		display: grid;
-		gap: 8px;
-		color: var(--el-text-color-regular);
-	}
-
-	&__features {
-		list-style: none;
-		padding: 0;
-		display: grid;
-		gap: 12px;
-
-		li {
-			display: flex;
-			align-items: center;
-			gap: 8px;
-			color: var(--el-text-color-regular);
-
-			i {
-				color: var(--el-color-primary);
-			}
-		}
-	}
-}
-</style>
+<style src="./style.scss" lang="scss" scoped></style>

@@ -2,6 +2,15 @@
 	<article
 		class="trip"
 	>
+		<div class="trip__avatar">
+			<el-avatar
+				v-if="avatarUrl"
+				:src="avatarUrl"
+			/>
+			<el-avatar
+				v-else
+			> {{ getUserInitials() }} </el-avatar>
+		</div>
 		<header class="trip__header">
 			<div class="trip__route route">
 				<span class="route__point">{{ request.locationFrom }}</span>
@@ -38,17 +47,11 @@
 				Открыть анкету
 			</el-button>
 		</div>
-		<!-- <div class="request__avatar">
-			<img
-				:src="request.avatar"
-				:alt="request.name"
-				class="request__avatar-img"
-			>
-		</div> -->
 	</article>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useTelegram } from '../../composables/useTelegram';
 
 const props = defineProps({
@@ -75,12 +78,13 @@ const formatDate = (datetime) => {
 
 const { tg, ready } = useTelegram();
 
+const avatarUrl = ref(null);
+
 const openProfile = () => {
 	emit('openProfile', props.request);
 };
 
 const openChat = (user) => {
-	console.log(1);
 	if (!ready || !tg) {
 		console.error('Telegram WebApp is not available');
 		tg.showPopup({
@@ -99,11 +103,9 @@ const openChat = (user) => {
 		});
 		return;
 	}
-	console.log(2);
 	try {
 		const message = `Здравствуйте! Я по поводу поездки ${props.request.from} → ${props.request.to} ${formatDate(props.request.datetime)}.`;
 		const encodedMessage = encodeURIComponent(message);
-		console.log(user);
 		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);
 	} catch (error) {
 		console.error('Error opening chat:', error);
@@ -114,6 +116,20 @@ const openChat = (user) => {
 		});
 	}
 }
+
+const fetchAvatar = async () => {
+	const response = await fetch(`http://localhost:8585/api/avatar/${props.request.userId}`);
+	const { url } = await response.json();
+	avatarUrl.value = url;
+};
+
+const getUserInitials = () => {
+	return props.request.userName.slice(0, 2).toUpperCase();
+};
+
+onMounted(async () => {
+	await fetchAvatar();
+});
 </script>
 
 <style src="./style.sass" lang="sass" scoped></style>

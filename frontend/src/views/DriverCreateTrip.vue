@@ -85,8 +85,8 @@ const form = ref({
 	locationFrom: '',
 	locationTo: '',
 	datetime: '',
-	freePlaces: 0,
-	price: 0,
+	freePlaces: 1,
+	price: null,
 	userId: null,
 	userName: null,
 });
@@ -96,11 +96,11 @@ onMounted(() => {
 		form.value.userId = user.id;
 		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
 	} else {
-		tg?.showPopup({
-			title: 'Ошибка',
-			message: 'Не удалось получить данные пользователя',
-			buttons: [{type: 'ok'}],
-		});
+		// tg?.showPopup({
+		// 	title: 'Ошибка',
+		// 	message: 'Не удалось получить данные пользователя',
+		// 	buttons: [{type: 'ok'}],
+		// });
 	}
 });
 
