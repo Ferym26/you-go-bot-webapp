@@ -3,6 +3,11 @@
 
 }
 
+.el-form-item {
+	width: 100% !important;
+	margin-bottom: 0 !important;
+}
+
 .el-input,
 .el-select,
 .el-date-editor {
@@ -29,3 +34,23 @@
 // 		text-overflow: unset !important;
 // 	}
 // }
+
+.el-date-picker__header {
+	.el-picker-panel__icon-btn {
+		padding: 0 8px;
+	}
+
+	.d-arrow-left {
+		display: none;
+	}
+
+	.d-arrow-right {
+		display: none;
+	}
+}
+
+.el-dialog {
+	--el-dialog-padding-primary: 24px;
+	--el-dialog-title-font-size: 20px !important;
+	--el-dialog-margin-top: 5vh !important;
+}

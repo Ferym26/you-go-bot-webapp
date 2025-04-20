@@ -27,32 +27,38 @@
 			<div class="driver-profile__section">
 				<h4 class="driver-profile__section-title">О водителе</h4>
 				<p class="driver-profile__description">
-					{{ driverInfo.name || 'Описание не добавлено' }}
+					<p><strong>Имя:</strong>{{ driverInfo.name || 'Не указано' }}</p>
+					<p><strong>Стаж:</strong>{{ driverInfo.experience || 'Не указано' }}</p>
 				</p>
 			</div>
 
 			<div class="driver-profile__section">
 				<h4 class="driver-profile__section-title">Автомобиль</h4>
 				<div class="driver-profile__car-info">
-					<p><strong>Марка:</strong> {{ driverInfo.carBrand || 'Не указано' }}</p>
+					<p><strong>Марка:</strong> {{ driverInfo.carDetails || 'Не указано' }}</p>
+					<!-- <p><strong>Марка:</strong> {{ driverInfo.carBrand || 'Не указано' }}</p>
 					<p><strong>Модель:</strong> {{ driverInfo.carModel || 'Не указано' }}</p>
 					<p><strong>Год:</strong> {{ driverInfo.carYear || 'Не указано' }}</p>
-					<p><strong>Цвет:</strong> {{ driverInfo.carColor || 'Не указано' }}</p>
+					<p><strong>Цвет:</strong> {{ driverInfo.carColor || 'Не указано' }}</p> -->
 				</div>
 			</div>
 
 			<div class="driver-profile__section">
 				<h4 class="driver-profile__section-title">Дополнительно</h4>
 				<ul class="driver-profile__features">
-					<li v-if="driverInfo.smokingAllowed">
-						<i class="fas fa-smoking"></i> Курение разрешено
-					</li>
 					<li v-if="driverInfo.petsAllowed">
 						<i class="fas fa-paw"></i> Можно с животными
 					</li>
-					<li v-if="driverInfo.musicAvailable">
-						<i class="fas fa-music"></i> Есть музыка
-					</li>
+				</ul>
+			</div>
+
+			<div class="driver-profile__section">
+				<h4 class="driver-profile__section-title">Контакты</h4>
+				<ul class="driver-profile__description">
+					<p>
+						<strong>Телефон:</strong>
+						<el-link type="success" :href="`tel:${driverInfo.phoneNumber}`">{{ driverInfo.phoneNumber }}</el-link>
+					</p>
 				</ul>
 			</div>
 		</div>
@@ -63,7 +69,7 @@
 				size="large"
 				@click="openChat"
 			>
-				Связаться с водителем
+				Чат с водителем
 			</el-button>
 		</div>
 	</div>
@@ -103,11 +109,11 @@ const fetchDriverInfo = async () => {
 		if (driverDoc.exists()) {
 			driverInfo.value = driverDoc.data();
 
-			if (driverInfo.value.carPhoto) {
-				const response = await fetch(`http://localhost:8585/api/photo/${driverInfo.value.carPhoto}`);
-				const { url } = await response.json();
-				photoUrl.value = url;
-			}
+			// if (driverInfo.value.carPhoto) {
+			// 	const response = await fetch(`http://localhost:8585/api/photo/${driverInfo.value.carPhoto}`);
+			// 	const { url } = await response.json();
+			// 	photoUrl.value = url;
+			// }
 		} else {
 			error.value = 'Профиль водителя не найден';
 		}
@@ -155,6 +161,7 @@ const openChat = () => {
 		const encodedMessage = encodeURIComponent(message);
 		// tg.openTelegramLink(`https://t.me/${props.driverData.name}?text=${encodedMessage}`);
 		tg.openTelegramLink(`https://t.me/${driverInfo.value.userName}?text=${encodedMessage}`);
+
 	} catch (error) {
 		console.error('Error opening chat:', error);
 		tg.showPopup({

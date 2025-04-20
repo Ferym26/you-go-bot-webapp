@@ -1,9 +1,10 @@
 <template>
 	<div class="driver-create-trip container page-indent">
 		<h1 class="page-title">Создать поездкy</h1>
-		<form
+		<el-form
 			@submit.prevent="handleSubmit"
 			class="request-form"
+			label-position="top"
 		>
 			<el-row :gutter="12">
 				<el-select
@@ -40,32 +41,45 @@
 					v-model="form.datetime"
 					type="datetime"
 					placeholder="Выберите дату и время"
+					time-format="HH:mm"
+					:format="'DD.MM.YYYY HH:mm'"
+					:editable="false"
+					:default-time="defaultTime"
+					:disabled-date="time => time < new Date().setHours(0, 0, 0, 0)"
 				/>
 			</el-row>
 			<el-row :gutter="12">
-				<el-input-number
-					v-model="form.freePlaces"
-					:min="1"
-					:max="8"
-					placeholder="Количество свободных мест"
-				/>
+				<el-form-item label="Свободные места">
+					<el-input-number
+						v-model="form.freePlaces"
+						:min="1"
+						:max="8"
+						placeholder="Количество свободных мест"
+					/>
+				</el-form-item>
 			</el-row>
 			<el-row :gutter="12">
 				<el-input
 					v-model="form.price"
 					placeholder="Введите стоимость поездки"
-				/>
+					:parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
+				>
+					<template #prefix>
+						<span>₾</span>
+					</template>
+				</el-input>
 			</el-row>
 			<el-row :gutter="12" class="driver-create-trip__action">
 				<el-button
 					type="primary"
 					size="large"
 					native-type="submit"
+					:disabled="!form.locationFrom || !form.locationTo || !form.datetime || !form.price"
 				>
 					Создать поездку
 				</el-button>
 			</el-row>
-		</form>
+		</el-form>
 	</div>
 </template>
 
@@ -80,6 +94,8 @@ import { places } from '../data/places';
 
 const router = useRouter();
 const { tg, user } = useTelegram();
+
+const defaultTime = new Date(2000, 1, 1, 8, 0, 0) // '12:00:00'
 
 const form = ref({
 	locationFrom: '',

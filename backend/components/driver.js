@@ -3,13 +3,24 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const profileTextGen = (data) => {
 	return `
-🚗 <b>Ваш профиль водителя</b>
-👤 Имя: ${data.name}
-🚘 Автомобиль: ${data.carDetails}
-📄 Описание:
-${data.description}
+		 <b>Ваш профиль водителя</b>
+		👤 Имя: ${data.name}
+		🧭 Стаж: ${data.experience}
+		🚗 Автомобиль: ${data.carDetails}
+		📄 Описание: ${data.description}
+		🐱🐶 Домашние животные: ${data.petsAllowed ? 'Да' : 'Нет'}
+		📞 Телефон: ${data.phoneNumber}
 	`;
 };
+
+const driverMenu = [
+	[{ text: "Создать поездкy", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
+	[{ text: "Редактировать анкету", callback_data: "driver_edit_profile" }],
+	[{ text: "📄 Посмотреть анкету", callback_data: "driver_view_profile" }],
+	[{ text: "Мои поездки", callback_data: "driver_view_trips" }],
+	[{ text: "Показать все заявки", web_app: { url: `${process.env.WEBAPP_URL}/requests` } }],
+	[{ text: "Показать все поездки", web_app: { url: `${process.env.WEBAPP_URL}/trips` } }],
+]
 
 const sessions = new Map();
 
@@ -34,14 +45,7 @@ export function registerDriver(bot) {
 
 		await ctx.reply("Выберите действие:", {
 			reply_markup: {
-				inline_keyboard: [
-					[{ text: "Создать поездкy", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
-					[{ text: "Редактировать анкету", callback_data: "driver_edit_profile" }],
-					[{ text: "📄 Посмотреть анкету", callback_data: "driver_view_profile" }],
-					[{ text: "Мои поездки", callback_data: "driver_view_trips" }],
-					[{ text: "Показать все заявки", web_app: { url: `${process.env.WEBAPP_URL}/requests` } }],
-					[{ text: "Показать все поездки", web_app: { url: `${process.env.WEBAPP_URL}/trips` } }],
-				]
+				inline_keyboard: driverMenu,
 			}
 		});
 	});
@@ -70,9 +74,12 @@ export function registerDriver(bot) {
 			reply_markup: {
 				inline_keyboard: [
 					[{ text: "Имя", callback_data: "driver_edit_name" }],
+					[{ text: "Стаж", callback_data: "driver_edit_experience" }],
 					[{ text: "Автомобиль", callback_data: "driver_edit_car" }],
 					[{ text: "Фото машины", callback_data: "driver_edit_car_photo" }],
-					[{ text: "Описание", callback_data: "driver_edit_description" }]
+					[{ text: "Описание", callback_data: "driver_edit_description" }],
+					[{ text: "Домашние животные", callback_data: "driver_edit_pets_allowed" }],
+					[{ text: "Телефон", callback_data: "driver_edit_phone_number" }],
 				]
 			}
 		});
@@ -116,6 +123,13 @@ export function registerDriver(bot) {
 				// Логика создания анкеты
 				case 'driver_create_name':
 					session.data.name = ctx.message.text;
+					session.step = 'driver_create_experience';
+					sessions.set(userId, session);
+					await ctx.reply("Укажите ваш стаж вождения (например: 5 лет):");
+					break;
+
+				case 'driver_create_experience':
+					session.data.experience = ctx.message.text;
 					session.step = 'driver_create_car';
 					sessions.set(userId, session);
 					await ctx.reply("Введите марку, год и цвет вашего автомобиля (например, Toyota, 2018, черный):");
@@ -140,14 +154,32 @@ export function registerDriver(bot) {
 
 				case 'driver_create_description':
 					session.data.description = ctx.message.text;
-					// session.data.userId = userId;
-					await setDoc(doc(db, 'drivers', String(userId)), session.data);
-					sessions.delete(userId);
-					await ctx.reply("✅ Ваша анкета создана! Теперь вы можете создавать поездки.", {
+					session.step = 'driver_create_pets';
+					sessions.set(userId, session);
+					await ctx.reply("Готовы ли вы перевозить домашних животных?", {
 						reply_markup: {
 							inline_keyboard: [
-								[{ text: "Создать поездку", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
+								[
+									{ text: "Да", callback_data: "pets_yes" },
+									{ text: "Нет", callback_data: "pets_no" }
+								]
 							]
+						}
+					});
+					break;
+
+				case 'driver_create_phone':
+					session.data.phoneNumber = ctx.message.text;
+					await setDoc(doc(db, 'drivers', String(userId)), {
+						...session.data,
+						createdAt: new Date()
+					});
+
+					sessions.delete(userId);
+
+					await ctx.reply("✅ Ваша анкета создана! Теперь вы можете создавать поездки.", {
+						reply_markup: {
+							inline_keyboard: driverMenu,
 						}
 					});
 					break;
@@ -224,5 +256,22 @@ export function registerDriver(bot) {
 				}
 			);
 		}
+	});
+
+	// Обработчик для кнопок выбора перевозки животных
+	bot.callbackQuery(/pets_(yes|no)/, async (ctx) => {
+		await ctx.answerCallbackQuery();
+		const userId = ctx.from.id;
+		const session = sessions.get(userId);
+
+		if (!session || session.step !== 'driver_create_pets') {
+			return ctx.reply("Произошла ошибка. Пожалуйста, начните регистрацию заново.");
+		}
+
+		session.data.petsAllowed = ctx.match[1] === 'yes';
+		session.step = 'driver_create_phone';
+		sessions.set(userId, session);
+
+		await ctx.reply("Введите ваш номер телефона для связи:");
 	});
 }

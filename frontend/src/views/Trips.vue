@@ -54,6 +54,8 @@
 						clearable
 						placeholder="Выберите дату"
 						size="large"
+						:format="'DD.MM.YYYY'"
+						:editable="false"
 					/>
 				</el-col>
 			</el-row>
@@ -101,9 +103,11 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
+
 import TripCard from '../components/TripCard/TripCard.vue';
-import { places } from '../data/places';
 import DriverProfile from '../components/DriverProfile/DriverProfile.vue';
+
+import { places } from '../data/places';
 
 const requests = ref([]);
 const loading = ref(true);

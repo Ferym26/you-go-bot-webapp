@@ -1,5 +1,6 @@
 .driver-profile {
-	padding: 20px;
+	display: grid;
+	grid-gap: 16px;
 
 	&__loading,
 	&__error,
@@ -15,13 +16,12 @@
 
 	&__header {
 		display: flex;
-		align-items: center;
-		margin-bottom: 24px;
+		justify-content: center;
 	}
 
 	&__car {
-		width: 100px;
-		height: 100px;
+		width: 240px;
+		height: 240px;
 		overflow: hidden;
 
 		&-img {
@@ -47,23 +47,29 @@
 		color: var(--el-color-warning);
 	}
 
-	&__section {
-		margin-bottom: 24px;
+	&__details {
+		display: grid;
+		gap: 12px;
+	}
 
-		&:last-child {
-			margin-bottom: 0;
-		}
+	&__section {
+
 	}
 
 	&__section-title {
-		font-size: 18px;
-		margin-bottom: 12px;
+		font-size: 16px;
 		color: var(--el-text-color-primary);
 	}
 
 	&__description {
 		color: var(--el-text-color-regular);
 		line-height: 1.5;
+
+		p {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
 	}
 
 	&__car-info {
@@ -85,8 +91,14 @@
 			color: var(--el-text-color-regular);
 
 			i {
-				color: var(--el-color-primary);
+				color: var(--el-color-secondary);
 			}
 		}
+	}
+
+	&__action {
+		display: flex;
+		justify-content: center;
+		margin-top: 20px;
 	}
 }
