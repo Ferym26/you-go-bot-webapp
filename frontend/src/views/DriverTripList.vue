@@ -1,7 +1,7 @@
 <template>
-	<div class="trips container page-indent">
-		<h1 class="page-title">Список поездок</h1>
-		<div class="requests__filters">
+	<div class="driver-trip-list container page-indent">
+		<h1 class="page-title">Список моих маршрутов</h1>
+		<div class="driver-trip-list__filters">
 			<el-row :gutter="12">
 				<el-col :span="24">
 					<el-select
@@ -54,8 +54,6 @@
 						clearable
 						placeholder="Выберите дату"
 						size="large"
-						:format="'DD.MM.YYYY'"
-						:editable="false"
 					/>
 				</el-col>
 			</el-row>
@@ -75,57 +73,30 @@
 				Нет активных заявок
 			</template>
 		</div>
-		<div v-else class="trips-list">
-			<TripCard
+		<div v-else class="requests-list">
+			<DriverTripCard
 				v-for="request in filteredRequests"
 				:key="request.id"
 				:request="request"
-				@open-profile="handleOpenProfile"
 			/>
 		</div>
 	</div>
-
-	<el-dialog
-		class="driver-profile-dialog"
-		v-model="dialogVisible"
-		title="Анкета водителя"
-		:close-on-click-modal="true"
-		:append-to-body="true"
-	>
-		<DriverProfile
-			v-if="selectedDriver"
-			:driver-data="selectedDriver"
-		/>
-	</el-dialog>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, getFirestore, where, getDocs } from 'firebase/firestore';
 import { db } from '../services/firebase';
-
-import TripCard from '../components/TripCard/TripCard.vue';
-import DriverProfile from '../components/DriverProfile/DriverProfile.vue';
-
+import DriverTripCard from '../components/DriverTripCard/DriverTripCard.vue';
 import { places } from '../data/places';
 
 const requests = ref([]);
 const loading = ref(true);
 const error = ref(null);
+
 const placeFrom = ref('');
 const placeTo = ref('');
 const date = ref('');
-const dialogVisible = ref(false);
-const selectedDriver = ref(null);
-
-const handleOpenProfile = (tripData) => {
-	selectedDriver.value = {
-		userId: tripData.userId,
-		locationFrom: tripData.locationFrom,
-		locationTo: tripData.locationTo
-	};
-	dialogVisible.value = true;
-};
 
 // Обработчик для создания новой опции при потере фокуса
 const handleBlur = (event, model) => {
@@ -148,7 +119,7 @@ const handleBlur = (event, model) => {
 	}
 };
 
-// Фильтрованный список заявок
+// Фильтрованный список поездок
 const filteredRequests = computed(() => {
 	return requests.value.filter(request => {
 		let matches = true;
@@ -176,109 +147,38 @@ const filteredRequests = computed(() => {
 	});
 });
 
-// Храним функцию отписки
-let unsubscribe = null;
-
-const subscribeToRequests = () => {
-	try {
-		loading.value = true;
-		error.value = null;
-
-		const q = query(
-			collection(db, 'transfer-proposals'),
-			orderBy('createdAt', 'desc')
-		);
-
-		unsubscribe = onSnapshot(
-			q,
-			(snapshot) => {
-				snapshot.docChanges().forEach((change) => {
-					const docData = change.doc.data();
-					const docId = change.doc.id;
-
-					if (change.type === 'added') {
-						// Добавляем новый элемент, если status !== 'hidden'
-						if (docData.status !== 'hidden') {
-							requests.value.push({ id: docId, ...docData });
-						}
-					}
-
-					if (change.type === 'modified') {
-						const index = requests.value.findIndex(item => item.id === docId);
-						if (docData.status === 'hidden') {
-							// Если статус стал hidden — удаляем из списка
-							if (index !== -1) {
-								requests.value.splice(index, 1);
-							}
-						} else {
-							if (index !== -1) {
-								// Обновляем элемент, если он уже есть
-								requests.value[index] = { id: docId, ...docData };
-							} else {
-								// Если элемента нет, а статус НЕ hidden — добавляем его
-								requests.value.push({ id: docId, ...docData });
-							}
-						}
-					}
-
-					if (change.type === 'removed') {
-						const index = requests.value.findIndex(item => item.id === docId);
-						if (index !== -1) {
-							requests.value.splice(index, 1);
-						}
-					}
-				});
-
-				loading.value = false;
-			},
-			(err) => {
-				console.error('Error fetching requests:', err);
-				error.value = 'Ошибка при загрузке заявок';
-				loading.value = false;
-			}
-		);
-	} catch (err) {
-		console.error('Error setting up listener:', err);
-		error.value = 'Ошибка при настройке слушателя';
-		loading.value = false;
-	}
-};
 
 
-onMounted(() => {
-	subscribeToRequests();
-});
 
-// Отписываемся при размонтировании компонента
-onUnmounted(() => {
-	if (unsubscribe) {
-		unsubscribe();
-	}
-});
+
+
+async function getUserDocs(userId) {
+  const q = query(
+    collection(db, "transfer-proposals"), // заменяешь на свою коллекцию
+    where("userId", "==", userId),
+  );
+
+  const querySnapshot = await getDocs(q);
+
+
+  querySnapshot.forEach((doc) => {
+    requests.value.push({ id: doc.id, ...doc.data() });
+  });
+
+
+}
+
+// Пример использования
+getUserDocs(283612610).then(() => {
+	loading.value = false;
+})
+
 </script>
 
 <style lang="scss" scoped>
-	.trips {
-		&__filters {
+	.driver-trip-list {
+			&__filters {
 			margin-bottom: 20px;
 		}
-	}
-
-	.trips-list {
-		display: grid;
-		gap: 12px;
-		margin-top: 20px;
-	}
-
-	.loading,
-	.error,
-	.empty {
-		text-align: center;
-		padding: 20px;
-		color: var(--el-text-color-secondary);
-	}
-
-	.error {
-		color: var(--el-color-danger);
 	}
 </style>

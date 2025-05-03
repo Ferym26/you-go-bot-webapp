@@ -26,6 +26,11 @@ const routes = [
 		name: 'DriverCreateTrip',
 		component: () => import('../views/DriverCreateTrip.vue')
 	},
+	{
+		path: '/driver-trip-list',
+		name: 'DriverTripList',
+		component: () => import('../views/DriverTripList.vue')
+	},
 ];
 
 const router = createRouter({
