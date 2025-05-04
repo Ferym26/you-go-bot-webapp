@@ -11,7 +11,12 @@
 					v-model="form.locationFrom"
 					filterable
 					required
+					:allow-create="true"
+					:no-match-text="'Нет совпадений'"
+					:no-data-text="'Нет данных'"
+					size="large"
 					placeholder="Выберите пункт отправления"
+					@blur="handleBlur($event, 'from')"
 				>
 					<el-option
 						v-for="item in places"
@@ -26,7 +31,12 @@
 					v-model="form.locationTo"
 					filterable
 					required
+					:allow-create="true"
+					:no-match-text="'Нет совпадений'"
+					:no-data-text="'Нет данных'"
+					size="large"
 					placeholder="Выберите пункт назначения"
+					@blur="handleBlur($event, 'to')"
 				>
 					<el-option
 						v-for="item in places"
@@ -41,6 +51,7 @@
 					v-model="form.datetime"
 					type="datetime"
 					placeholder="Выберите дату и время"
+					size="large"
 					time-format="HH:mm"
 					:format="'DD.MM.YYYY HH:mm'"
 					:editable="false"
@@ -55,6 +66,7 @@
 						:min="1"
 						:max="8"
 						placeholder="Количество свободных мест"
+						size="large"
 					/>
 				</el-form-item>
 			</el-row>
@@ -62,6 +74,7 @@
 				<el-input
 					v-model="form.price"
 					placeholder="Введите стоимость поездки"
+					size="large"
 					:parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
 				>
 					<template #prefix>
@@ -89,8 +102,10 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useRouter } from 'vue-router';
 import { useTelegram } from '../composables/useTelegram';
+import { handleBlur } from '../composables/handleBlur.js';
 
 import { places } from '../data/places';
+import { TransferStatus } from '../types/types';
 
 const router = useRouter();
 const { tg, user } = useTelegram();
@@ -134,7 +149,7 @@ const handleSubmit = async () => {
 		await addDoc(collection(db, 'transfer-proposals'), {
 			...form.value,
 			createdAt: new Date(),
-			status: 'pending',
+			status: TransferStatus.ready,
 		});
 
 		tg?.showPopup({

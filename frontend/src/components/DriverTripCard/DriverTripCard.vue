@@ -26,16 +26,23 @@
 		</div>
 		<div class="driver-trip-card__action">
 			<el-button
+				type="success"
+				@click="toggleTripStatus()"
+			>
+				Начать поездку
+			</el-button>
+			<el-button
 				:type="isTripStarted ? 'primary' : 'info'"
 				@click="toggleTripStatus()"
 			>
-				{{ isTripStarted ? 'Начать поездку' : 'Завершить поездку'}}
+				<i :class="isTripStarted ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+
 			</el-button>
 			<el-button
 				type="danger"
 				@click="deleteTrip()"
 			>
-				Удалить поездку
+				<i class="fas fa-xmark"></i>
 			</el-button>
 		</div>
 	</article>
@@ -45,6 +52,8 @@
 import { ref, onMounted } from 'vue';
 import { getFirestore, doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from '../../services/firebase';
+import { TransferStatus } from '../../types/types';
+import { formatDate } from '../../composables/formatDate';
 
 
 const props = defineProps({
@@ -55,26 +64,16 @@ const props = defineProps({
 });
 const isTripStarted = ref(null);
 
-
-const formatDate = (datetime) => {
-	if (!datetime) return '';
-	const timestamp = datetime?.seconds ? new Date(datetime.seconds * 1000) : new Date(datetime);
-
-	return new Intl.DateTimeFormat('ru-RU', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit'
-	}).format(timestamp);
-};
-
 const toggleTripStatus = () => {
 	const docRef = doc(db, "transfer-proposals", props.request.id);
 	updateDoc(docRef, {
-		status: isTripStarted.value ? 'hidden' : 'ready',
+		status: isTripStarted.value ? TransferStatus.hidden : TransferStatus.ready,
 	});
 	isTripStarted.value = !isTripStarted.value;
+}
+
+const toggleTripVisibility = () => {
+	// TODO: here
 }
 
 const deleteTrip = () => {
@@ -87,7 +86,7 @@ onMounted(async () => {
 
   if (docSnap.exists()) {
     const data = docSnap.data();
-    isTripStarted.value = data.status === 'ready'; // Устанавливаем состояние в зависимости от поля status
+    isTripStarted.value = data.status === TransferStatus.ready; // Устанавливаем состояние в зависимости от поля status
   }
 });
 

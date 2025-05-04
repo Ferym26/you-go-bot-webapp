@@ -1,16 +1,22 @@
 <template>
 	<div class="create-request container page-indent">
 		<h1 class="page-title">Создать заявку на трансфер</h1>
-		<form
+		<el-form
 			@submit.prevent="handleSubmit"
 			class="request-form"
+			label-position="top"
 		>
 			<el-row :gutter="12">
 				<el-select
 					v-model="form.locationFrom"
 					filterable
 					required
+					:allow-create="true"
+					:no-match-text="'Нет совпадений'"
+					:no-data-text="'Нет данных'"
+					size="large"
 					placeholder="Выберите пункт отправления"
+					@blur="handleBlur($event, 'from')"
 				>
 					<el-option
 						v-for="item in places"
@@ -25,7 +31,12 @@
 					v-model="form.locationTo"
 					filterable
 					required
+					:allow-create="true"
+					:no-match-text="'Нет совпадений'"
+					:no-data-text="'Нет данных'"
+					size="large"
 					placeholder="Выберите пункт назначения"
+					@blur="handleBlur($event, 'to')"
 				>
 					<el-option
 						v-for="item in places"
@@ -40,26 +51,31 @@
 					v-model="form.datetime"
 					type="datetime"
 					placeholder="Выберите дату и время"
+					size="large"
 				/>
 			</el-row>
 			<el-row :gutter="12">
-				<el-input-number
-					v-model="form.passengers"
-					:min="1"
-					:max="10"
-					placeholder="Количество пассажиров"
-				/>
+				<el-form-item label="Количество пассажиров">
+					<el-input-number
+						v-model="form.passengers"
+						:min="1"
+						:max="8"
+						placeholder="Количество пассажиров"
+						size="large"
+					/>
+				</el-form-item>
 			</el-row>
 			<el-row :gutter="12" class="create-request__action">
 				<el-button
 					type="primary"
 					size="large"
 					native-type="submit"
+					:disabled="!form.locationFrom || !form.locationTo || !form.datetime"
 				>
 					Создать заявку
 				</el-button>
 			</el-row>
-		</form>
+		</el-form>
 	</div>
 </template>
 
@@ -70,7 +86,10 @@ import { db } from '../services/firebase';
 import { useRouter } from 'vue-router';
 import { useTelegram } from '../composables/useTelegram';
 
+import { handleBlur } from '../composables/handleBlur.js';
+
 import { places } from '../data/places';
+import { TransferStatus } from '../types/types';
 
 const router = useRouter();
 const { tg, user } = useTelegram();
@@ -113,7 +132,7 @@ const handleSubmit = async () => {
 		await addDoc(collection(db, 'transfer-requests'), {
 			...form.value,
 			createdAt: new Date(),
-			status: 'pending',
+			status: TransferStatus.ready,
 		});
 
 		tg?.showPopup({

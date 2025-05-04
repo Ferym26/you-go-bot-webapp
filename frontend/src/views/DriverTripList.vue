@@ -60,7 +60,7 @@
 		</div>
 
 		<div v-if="loading" class="loading">
-			Загрузка...
+			<el-card class="skeleton-card" v-loading="true"></el-card>
 		</div>
 		<div v-else-if="error" class="error">
 			{{ error }}
@@ -89,6 +89,7 @@ import { collection, query, orderBy, onSnapshot, getFirestore, where, getDocs } 
 import { db } from '../services/firebase';
 import DriverTripCard from '../components/DriverTripCard/DriverTripCard.vue';
 import { places } from '../data/places';
+import { handleBlur } from '../composables/handleBlur.js';
 
 const requests = ref([]);
 const loading = ref(true);
@@ -98,26 +99,6 @@ const placeFrom = ref('');
 const placeTo = ref('');
 const date = ref('');
 
-// Обработчик для создания новой опции при потере фокуса
-const handleBlur = (event, model) => {
-	const value = event.target.value?.trim();
-	if (!value) return;
-
-	// Проверяем, существует ли уже такая опция
-	const exists = places.some(place =>
-		place.value.toLowerCase() === value.toLowerCase() ||
-		place.label.toLowerCase() === value.toLowerCase()
-	);
-
-	if (!exists) {
-		// Если опции нет, добавляем её
-		if (model === 'from') {
-			placeFrom.value = value;
-		} else {
-			placeTo.value = value;
-		}
-	}
-};
 
 // Фильтрованный список поездок
 const filteredRequests = computed(() => {

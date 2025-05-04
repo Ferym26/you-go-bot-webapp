@@ -106,6 +106,7 @@ import { db } from '../services/firebase';
 
 import TripCard from '../components/TripCard/TripCard.vue';
 import DriverProfile from '../components/DriverProfile/DriverProfile.vue';
+import { handleBlur } from '../composables/handleBlur.js';
 
 import { places } from '../data/places';
 
@@ -125,27 +126,6 @@ const handleOpenProfile = (tripData) => {
 		locationTo: tripData.locationTo
 	};
 	dialogVisible.value = true;
-};
-
-// Обработчик для создания новой опции при потере фокуса
-const handleBlur = (event, model) => {
-	const value = event.target.value?.trim();
-	if (!value) return;
-
-	// Проверяем, существует ли уже такая опция
-	const exists = places.some(place =>
-		place.value.toLowerCase() === value.toLowerCase() ||
-		place.label.toLowerCase() === value.toLowerCase()
-	);
-
-	if (!exists) {
-		// Если опции нет, добавляем её
-		if (model === 'from') {
-			placeFrom.value = value;
-		} else {
-			placeTo.value = value;
-		}
-	}
 };
 
 // Фильтрованный список заявок

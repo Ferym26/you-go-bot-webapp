@@ -89,6 +89,7 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import RequestCard from '../components/RequestCard/RequestCard.vue';
 import { places } from '../data/places';
+import { handleBlur } from '../composables/handleBlur.js';
 
 const requests = ref([]);
 const loading = ref(true);
@@ -96,27 +97,6 @@ const error = ref(null);
 const placeFrom = ref('');
 const placeTo = ref('');
 const date = ref('');
-
-// Обработчик для создания новой опции при потере фокуса
-const handleBlur = (event, model) => {
-	const value = event.target.value?.trim();
-	if (!value) return;
-
-	// Проверяем, существует ли уже такая опция
-	const exists = places.some(place =>
-		place.value.toLowerCase() === value.toLowerCase() ||
-		place.label.toLowerCase() === value.toLowerCase()
-	);
-
-	if (!exists) {
-		// Если опции нет, добавляем её
-		if (model === 'from') {
-			placeFrom.value = value;
-		} else {
-			placeTo.value = value;
-		}
-	}
-};
 
 // Фильтрованный список заявок
 const filteredRequests = computed(() => {

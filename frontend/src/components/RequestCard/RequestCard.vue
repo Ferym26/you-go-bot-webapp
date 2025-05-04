@@ -34,6 +34,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useTelegram } from '../../composables/useTelegram';
+import { formatDate } from '../../composables/formatDate';
 
 const props = defineProps({
 	request: {
@@ -42,23 +43,9 @@ const props = defineProps({
 	}
 });
 
-const formatDate = (datetime) => {
-	if (!datetime) return '';
-	const timestamp = datetime?.seconds ? new Date(datetime.seconds * 1000) : new Date(datetime);
-
-	return new Intl.DateTimeFormat('ru-RU', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric',
-		hour: '2-digit',
-		minute: '2-digit'
-	}).format(timestamp);
-};
-
 const { tg, ready } = useTelegram();
 
 const openChat = (user) => {
-	console.log(1);
 	if (!ready || !tg) {
 		console.error('Telegram WebApp is not available');
 		tg.showPopup({
@@ -77,7 +64,6 @@ const openChat = (user) => {
 		});
 		return;
 	}
-	console.log(2);
 	try {
 		const message = `Здравствуйте! Я по поводу поездки ${props.request.from} → ${props.request.to} ${formatDate(props.request.datetime)}.`;
 		const encodedMessage = encodeURIComponent(message);
