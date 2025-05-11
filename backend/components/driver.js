@@ -14,12 +14,12 @@ const profileTextGen = (data) => {
 };
 
 const driverMenu = [
+	[{ text: "Мои поездки", web_app: { url: `${process.env.WEBAPP_URL}/driver-trip-list` } }],
 	[{ text: "Создать поездкy", web_app: { url: `${process.env.WEBAPP_URL}/driver-create-trip` } }],
-	[{ text: "Редактировать анкету", callback_data: "driver_edit_profile" }],
-	[{ text: "📄 Посмотреть анкету", callback_data: "driver_view_profile" }],
-	[{ text: "Мои поездки", callback_data: "driver_view_trips" }],
 	[{ text: "Показать все заявки", web_app: { url: `${process.env.WEBAPP_URL}/requests` } }],
 	[{ text: "Показать все поездки", web_app: { url: `${process.env.WEBAPP_URL}/trips` } }],
+	[{ text: "Посмотреть анкету", callback_data: "driver_view_profile" }],
+	[{ text: "Редактировать анкету", callback_data: "driver_edit_profile" }],
 ]
 
 const sessions = new Map();

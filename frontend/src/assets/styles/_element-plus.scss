@@ -3,6 +3,10 @@
 
 }
 
+.el-button {
+	text-decoration: none;
+}
+
 .el-form-item {
 	width: 100% !important;
 	margin-bottom: 0 !important;
@@ -53,4 +57,8 @@
 	--el-dialog-padding-primary: 24px;
 	--el-dialog-title-font-size: 20px !important;
 	--el-dialog-margin-top: 5vh !important;
+}
+
+.el-alert {
+	box-shadow: var(--el-box-shadow-lighter);
 }

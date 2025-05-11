@@ -5,7 +5,7 @@
 			<el-row :gutter="12">
 				<el-col :span="24">
 					<el-select
-						v-model="placeFrom"
+						v-model="form.locationFrom"
 						filterable
 						clearable
 						:allow-create="true"
@@ -27,7 +27,7 @@
 			<el-row :gutter="12">
 				<el-col :span="24">
 					<el-select
-						v-model="placeTo"
+						v-model="form.locationTo"
 						filterable
 						clearable
 						:allow-create="true"
@@ -49,7 +49,7 @@
 			<el-row :gutter="12">
 				<el-col :span="24">
 					<el-date-picker
-						v-model="date"
+						v-model="form.date"
 						type="date"
 						clearable
 						placeholder="Выберите дату"
@@ -63,14 +63,49 @@
 			<el-card class="skeleton-card" v-loading="true"></el-card>
 		</div>
 		<div v-else-if="error" class="error">
-			{{ error }}
+			<el-row :gutter="16">
+				<el-col :span="24">
+					<el-alert
+						title="Ошибка при получении данных"
+						description="Пожалуйста, обратитесь к администратору"
+						type="error"
+						:closable="false"
+						show-icon
+					/>
+				</el-col>
+			</el-row>
+			<el-row :gutter="16">
+				<el-col :span="24">
+					<el-button
+						tag="a"
+						href="#"
+						type="danger"
+						size="large"
+						:icon="Message"
+						style="width: 100%;"
+					>
+						Написать сообщение
+					</el-button>
+				</el-col>
+			</el-row>
 		</div>
 		<div v-else-if="filteredRequests.length === 0" class="empty">
-			<template v-if="placeFrom || placeTo || date">
-				Нет заявок по выбранным фильтрам
+			<template v-if="form.locationFrom || form.locationTo || form.date">
+				<el-alert
+					title="Нет заявок по выбранным фильтрам"
+					description="Выберите другие параметры"
+					type="warning"
+					:closable="false"
+					show-icon
+				/>
 			</template>
 			<template v-else>
-				Нет активных заявок
+				<el-alert
+					title="Нет активных заявок"
+					type="warning"
+					:closable="false"
+					show-icon
+				/>
 			</template>
 		</div>
 		<div v-else class="requests-list">
@@ -87,38 +122,40 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { collection, query, orderBy, onSnapshot, getFirestore, where, getDocs } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import DriverTripCard from '../components/DriverTripCard/DriverTripCard.vue';
 import { places } from '../data/places';
 import { handleBlur } from '../composables/handleBlur.js';
+
+import { Message } from '@element-plus/icons-vue'
 
 const requests = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
-const placeFrom = ref('');
-const placeTo = ref('');
-const date = ref('');
-
+const form = ref({
+	locationFrom: '',
+	locationTo: '',
+	date: '',
+});
 
 // Фильтрованный список поездок
 const filteredRequests = computed(() => {
 	return requests.value.filter(request => {
 		let matches = true;
 
-		if (placeFrom.value) {
-			matches = matches && request.locationFrom === placeFrom.value;
+		if (form.value.locationFrom) {
+			matches = matches && request.locationFrom === form.value.locationFrom;
 		}
 
-		if (placeTo.value) {
-			matches = matches && request.locationTo === placeTo.value;
+		if (form.value.locationTo) {
+			matches = matches && request.locationTo === form.value.locationTo;
 		}
 
-		if (date.value) {
+		if (form.value.date) {
 			// Преобразуем даты к началу дня для сравнения
 			const requestDate = new Date(request.datetime.seconds * 1000);
 			requestDate.setHours(0, 0, 0, 0);
 
-			const filterDate = new Date(date.value);
+			const filterDate = new Date(form.value.date);
 			filterDate.setHours(0, 0, 0, 0);
 
 			matches = matches && requestDate.getTime() === filterDate.getTime();
@@ -128,11 +165,6 @@ const filteredRequests = computed(() => {
 	});
 });
 
-
-
-
-
-
 async function getUserDocs(userId) {
   const q = query(
     collection(db, "transfer-proposals"), // заменяешь на свою коллекцию
@@ -140,13 +172,9 @@ async function getUserDocs(userId) {
   );
 
   const querySnapshot = await getDocs(q);
-
-
   querySnapshot.forEach((doc) => {
     requests.value.push({ id: doc.id, ...doc.data() });
   });
-
-
 }
 
 // Пример использования
@@ -158,7 +186,7 @@ getUserDocs(283612610).then(() => {
 
 <style lang="scss" scoped>
 	.driver-trip-list {
-			&__filters {
+		&__filters {
 			margin-bottom: 20px;
 		}
 	}

@@ -25,12 +25,12 @@
 			<span class="driver-trip-card__price-value">{{ request.price }}</span>
 		</div>
 		<div class="driver-trip-card__action">
-			<el-button
+			<!-- <el-button
 				type="success"
 				@click="toggleTripStatus()"
 			>
 				Начать поездку
-			</el-button>
+			</el-button> -->
 			<el-button
 				:type="isTripStarted ? 'primary' : 'info'"
 				@click="toggleTripStatus()"

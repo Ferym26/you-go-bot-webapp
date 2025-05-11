@@ -3,10 +3,10 @@ const menuList = [
 		command: 'start',
 		description: 'Запуск бота',
 	},
-	{
-		command: 'change_role',
-		description: 'Сменить роль',
-	},
+	// {
+	// 	command: 'change_role',
+	// 	description: 'Сменить роль',
+	// },
 	{
 		command: 'show_all_requests',
 		description: 'Посмотреть все заявки',
