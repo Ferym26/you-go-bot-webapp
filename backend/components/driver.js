@@ -3,7 +3,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const profileTextGen = (data) => {
 	return `
-		 <b>Ваш профиль водителя</b>
+		<b>Ваш профиль водителя</b>
 		👤 Имя: ${data.name}
 		🧭 Стаж: ${data.experience}
 		🚗 Автомобиль: ${data.carDetails}

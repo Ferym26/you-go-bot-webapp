@@ -4,9 +4,9 @@
 	>
 		<header class="driver-trip-card__header">
 			<div class="driver-trip-card__route route">
-				<span class="route__point">{{ request.locationFrom }}</span>
+				<span class="route__point">{{ setRealPlaceName(request.locationFrom) }}</span>
 				<span class="route__arrow"> → </span>
-				<span class="route__point">{{ request.locationTo }}</span>
+				<span class="route__point">{{ setRealPlaceName(request.locationTo) }}</span>
 			</div>
 		</header>
 
@@ -54,6 +54,7 @@ import { getFirestore, doc, deleteDoc, updateDoc, getDoc } from "firebase/firest
 import { db } from '../../services/firebase';
 import { TransferStatus } from '../../types/types';
 import { formatDate } from '../../composables/formatDate';
+import { setRealPlaceName } from '../../composables/setRealPlaceName';
 
 
 const props = defineProps({

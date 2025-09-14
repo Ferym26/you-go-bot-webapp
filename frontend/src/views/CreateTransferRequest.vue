@@ -52,6 +52,11 @@
 					type="datetime"
 					placeholder="Выберите дату и время"
 					size="large"
+					time-format="HH:mm"
+					:format="'DD.MM.YYYY HH:mm'"
+					:editable="false"
+					:default-time="defaultTime"
+					:disabled-date="time => time < new Date().setHours(0, 0, 0, 0)"
 				/>
 			</el-row>
 			<el-row :gutter="12">
@@ -94,6 +99,8 @@ import { TransferStatus } from '../types/types';
 const router = useRouter();
 const { tg, user } = useTelegram();
 
+const defaultTime = new Date(2000, 1, 1, 8, 0, 0) // '8:00:00'
+
 const form = ref({
 	locationFrom: '',
 	locationTo: '',
@@ -110,11 +117,11 @@ onMounted(() => {
 		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
 		form.value.userAvatar = user.avatar;
 	} else {
-		tg?.showPopup({
-			title: 'Ошибка',
-			message: 'Не удалось получить данные пользователя',
-			buttons: [{type: 'ok'}],
-		});
+		// tg?.showPopup({
+		// 	title: 'Ошибка',
+		// 	message: 'Не удалось получить данные пользователя',
+		// 	buttons: [{type: 'ok'}],
+		// });
 	}
 });
 
@@ -149,7 +156,9 @@ const handleSubmit = async () => {
 		tg?.showPopup({
 			title: 'Ошибка',
 			message: 'Не удалось создать заявку',
-			buttons: [{type: 'ok'}]
+			buttons: [{
+				type: 'ok',
+			}]
 		});
 	}
 };

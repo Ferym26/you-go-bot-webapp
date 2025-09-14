@@ -54,6 +54,7 @@
 						clearable
 						placeholder="Выберите дату"
 						size="large"
+						:disabled-date="time => time < new Date().setHours(0, 0, 0, 0)"
 					/>
 				</el-col>
 			</el-row>

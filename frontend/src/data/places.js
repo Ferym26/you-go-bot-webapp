@@ -104,7 +104,7 @@ export const places = [
 		value: "sighnaghi",
 	},
 	{
-		label: "Кахетия (Телави, Цинандали, Кварели)",
+		label: "Кахетия",
 		value: "kakheti",
 	},
 	{
@@ -148,15 +148,7 @@ export const places = [
 		value: "paravani_pass",
 	},
 	{
-		label: "Пасанаури (хинкали)",
-		value: "pasanauri",
-	},
-	{
 		label: "Монастырь Давид Гареджи",
 		value: "david_gareja",
-	},
-	{
-		label: "Тбилиси (старый город, Нарикала, серные бани)",
-		value: "tbilisi_old_town",
 	},
 ];

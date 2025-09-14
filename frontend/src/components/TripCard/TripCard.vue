@@ -13,9 +13,9 @@
 		</div>
 		<header class="trip__header">
 			<div class="trip__route route">
-				<span class="route__point">{{ request.locationFrom }}</span>
+				<span class="route__point">{{ setRealPlaceName(request.locationFrom) }}</span>
 				<span class="route__arrow"> → </span>
-				<span class="route__point">{{ request.locationTo }}</span>
+				<span class="route__point">{{ setRealPlaceName(request.locationTo) }}</span>
 			</div>
 		</header>
 
@@ -54,6 +54,7 @@
 import { ref, onMounted } from 'vue';
 import { useTelegram } from '../../composables/useTelegram';
 import { formatDate } from '../../composables/formatDate';
+import { setRealPlaceName } from '../../composables/setRealPlaceName';
 
 const props = defineProps({
 	request: {
@@ -92,7 +93,7 @@ const openChat = (user) => {
 		return;
 	}
 	try {
-		const message = `Здравствуйте! Я по поводу поездки ${props.request.from} → ${props.request.to} ${formatDate(props.request.datetime)}.`;
+		const message = `Здравствуйте! Я по поводу поездки ${props.request.locationFrom} → ${props.request.locationTo} ${formatDate(props.request.datetime)}.`;
 		const encodedMessage = encodeURIComponent(message);
 		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);
 	} catch (error) {
