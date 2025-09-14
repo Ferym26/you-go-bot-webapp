@@ -125,7 +125,7 @@ const form = ref({
 onMounted(() => {
 	if (user) {
 		form.value.userId = user.id;
-		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
+		form.value.userName = `${user.username}`.trim() || `${user.first_name} ${user.last_name || ''}`.trim();
 	} else {
 		// tg?.showPopup({
 		// 	title: 'Ошибка',
