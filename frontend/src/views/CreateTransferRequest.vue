@@ -115,7 +115,7 @@ onMounted(() => {
 	if (user) {
 		form.value.userId = user.id;
 		form.value.userName = user.username || `${user.first_name} ${user.last_name || ''}`.trim();
-		form.value.userAvatar = user.avatar;
+		form.value.userAvatar = user.photo_url;
 	} else {
 		// tg?.showPopup({
 		// 	title: 'Ошибка',
