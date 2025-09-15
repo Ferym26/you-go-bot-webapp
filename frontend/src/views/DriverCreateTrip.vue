@@ -125,7 +125,7 @@ const form = ref({
 onMounted(() => {
 	if (user) {
 		form.value.userId = user.id;
-		form.value.userName = `${user.username}`.trim() || `${user.first_name} ${user.last_name || ''}`.trim();
+		form.value.userName = user.username.trim() || `${user.first_name} ${user.last_name || ''}`.trim();
 	} else {
 		// tg?.showPopup({
 		// 	title: 'Ошибка',
@@ -146,11 +146,12 @@ const handleSubmit = async () => {
 	}
 
 	try {
-		await addDoc(collection(db, 'transfer-proposals'), {
-			...form.value,
-			createdAt: new Date(),
-			status: TransferStatus.ready,
-		});
+		alert(form.value.userName)
+		// await addDoc(collection(db, 'transfer-proposals'), {
+		// 	...form.value,
+		// 	createdAt: new Date(),
+		// 	status: TransferStatus.ready,
+		// });
 
 		tg?.showPopup({
 			title: 'Успех',
