@@ -1,0 +1,15 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - echo "Build skipped (we build on server in Docker)"
+
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - ssh user@server "cd /home/user/avatar-service && git pull && docker compose up -d --build"
