@@ -77,7 +77,6 @@ const openChat = (user) => {
 
 	try {
 		const encodedMessage = encodeURIComponent(message());
-		console.log(user);
 		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);
 	} catch (error) {
 		console.error('Error opening chat:', error);

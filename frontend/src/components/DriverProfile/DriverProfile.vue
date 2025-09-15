@@ -26,10 +26,10 @@
 		<div class="driver-profile__details">
 			<div class="driver-profile__section">
 				<h4 class="driver-profile__section-title">О водителе</h4>
-				<p class="driver-profile__description">
+				<div class="driver-profile__description">
 					<p><strong>Имя:</strong>{{ driverInfo.name || 'Не указано' }}</p>
 					<p><strong>Стаж:</strong>{{ driverInfo.experience || 'Не указано' }}</p>
-				</p>
+				</div>
 			</div>
 
 			<div class="driver-profile__section">
@@ -109,6 +109,7 @@ const fetchDriverInfo = async () => {
 		if (driverDoc.exists()) {
 			driverInfo.value = driverDoc.data();
 
+			// TODO: фото заработает после переезда фотосервиса на сервак. локально не работает
 			// if (driverInfo.value.carPhoto) {
 			// 	const response = await fetch(`http://localhost:8585/api/photo/${driverInfo.value.carPhoto}`);
 			// 	const { url } = await response.json();

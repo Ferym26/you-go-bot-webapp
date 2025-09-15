@@ -73,6 +73,15 @@ const openProfile = () => {
 	emit('openProfile', props.request);
 };
 
+const message = () => {
+	return `Здравствуйте 👋
+		Я по поводу поездки:
+		🗺️ ${setRealPlaceName(props.request.locationFrom)} ➡️ ${setRealPlaceName(props.request.locationTo)}
+		🗓️ ${formatDate(props.request.datetime)}
+		🟢 Хочу поехать с вами
+	`.replace(/^\s+/gm, '')
+}
+
 const openChat = (user) => {
 	if (!ready || !tg) {
 		console.error('Telegram WebApp is not available');
@@ -93,8 +102,8 @@ const openChat = (user) => {
 		return;
 	}
 	try {
-		const message = `Здравствуйте! Я по поводу поездки ${props.request.locationFrom} → ${props.request.locationTo} ${formatDate(props.request.datetime)}.`;
-		const encodedMessage = encodeURIComponent(message);
+		const encodedMessage = encodeURIComponent(message());
+		alert(user)
 		tg.openTelegramLink(`https://t.me/${user}?text=${encodedMessage}`);
 	} catch (error) {
 		console.error('Error opening chat:', error);
